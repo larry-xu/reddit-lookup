@@ -1,0 +1,99 @@
+@import "sanitize.css";
+
+/* firefox scrollbar bug workaround */
+body {
+  min-width: 600px;
+  max-width: 620px;
+}
+
+.popupWrapper {
+  padding: 20px;
+  font-family: verdana, arial, helvetica, sans-serif;
+  background: #dae0e6;
+}
+
+.popupWrapper a {
+  text-decoration: none;
+}
+
+.submissionWrapper {
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  background: #ffffff;
+  padding: 8px;
+  display: grid;
+  grid-template-columns: 100px auto;
+  cursor: pointer;
+}
+
+.submissionWrapper:hover {
+  border-color: #898989;
+}
+
+.submissionWrapper:last-child {
+  margin: 0;
+}
+
+.submissionWrapper > * + * {
+  margin-left: 8px;
+  padding-left: 12px;
+  border-left: 1px solid #dddddd;
+}
+
+.submissionAuthorWrapper {
+  color: #787c7e;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.submissionAuthor {
+  color: #787c7e;
+}
+
+.submissionAuthor:hover {
+  text-decoration: underline;
+}
+
+.submissionAuthorSeparator {
+  font-size: 6px;
+  margin: 0 4px;
+}
+
+.submissionScoreWrapper {
+  font-weight: 700;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.submissionScore {
+  font-size: 14px;
+  color: #222222;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.submissionComments {
+  font-size: 10px;
+  color: #787c7e;
+}
+
+.submissionSubreddit {
+  color: #222222;
+  font-weight: 700;
+}
+
+.submissionSubreddit:hover {
+  text-decoration: underline;
+}
+
+.submissionTitle {
+  color: #222222;
+  font-size: 14px;
+}
