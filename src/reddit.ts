@@ -1,3 +1,5 @@
+import { getSearchParams, SearchParams } from "./url";
+
 /**
  * Reddit API response types
  */
@@ -34,57 +36,39 @@ export type Submission = {
   title: string;
 };
 
+/**
+ * Get list of reddit API endpoints to query based on search params
+ */
+const getRedditApiUrls = ({
+  exactUrls,
+  urlSearch,
+  selfTextSearch,
+}: SearchParams) => {
+  return exactUrls
+    .map((url) => encodeURIComponent(url))
+    .map((encodedUrl) => `https://api.reddit.com/api/info?url=${encodedUrl}`)
+    .concat([
+      `https://api.reddit.com/search?sort=top&q=url:${urlSearch}`,
+      `https://api.reddit.com/search?sort=top&q=selftext:${selfTextSearch}`,
+    ]);
+};
+
+/**
+ * Make fetch request to reddit API endpoint
+ */
 const fetchRedditApi = async (url: string): Promise<RedditListing> => {
-  return fetch(url).then((response) => response.json());
-};
-
-const getRedditApiUrls = (href: string) => {
-  return [
-    `https://api.reddit.com/api/info?url=${href}`,
-    `https://api.reddit.com/search?q=url:${href}`,
-    `https://api.reddit.com/search?q=selftext:"${href}"`,
-  ];
-};
-
-/**
- * Gets alternative Youtube url format for given href
- *
- * Example:
- * www.youtube.com/watch?v=XYZ -> youtu.be/XYZ
- */
-const getAlternateYoutubeUrl = (href: string) => {
-  const url = new URL(href);
-  if (url.hostname !== "www.youtube.com" && url.pathname !== "/watch") {
-    return;
-  }
-
-  const videoId = url.searchParams.get("v");
-  if (videoId === null) {
-    return;
-  }
-
-  return `https://youtu.be/${videoId}`;
-};
-
-/**
- * Get list of reddit API endpoints to query based on target url
- */
-const getUrls = (href: string): string[] => {
-  const altUrl = getAlternateYoutubeUrl(href);
-  if (altUrl === undefined) {
-    return getRedditApiUrls(href);
-  }
-
-  return getRedditApiUrls(href).concat(getRedditApiUrls(altUrl));
+  const response = await fetch(url);
+  return response.json();
 };
 
 /**
  * Fetch all relevant Reddit posts for given url.
  * Returns an array of Submission objects sorted by score descending.
  */
-export const fetchRedditPosts = async (url: string) => {
-  const urls = getUrls(url);
-  const responsePromises = urls.map((url) => fetchRedditApi(url));
+export const fetchRedditPosts = async (href: string) => {
+  const searchParams = getSearchParams(href);
+  const urls = getRedditApiUrls(searchParams);
+  const responsePromises = urls.map(fetchRedditApi);
   const responses = await Promise.all(responsePromises);
 
   // de-dupe the posts by creating a map keyed by permalink
